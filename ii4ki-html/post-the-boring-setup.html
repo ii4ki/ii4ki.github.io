@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The boring setup that prevents disaster — ii4ki</title>
+  <meta name="description" content="On secrets management, recoverable defaults, and why the unsexy choices win." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/global.css" />
+</head>
+<body data-screen-label="05 Blog post">
+  <div class="shell">
+
+    <header class="path-strip">
+      <span class="path">[ <span class="sep">~/</span>blog<span class="sep">/</span>2026-05-07-the-boring-setup ]</span>
+      <span class="meta">cat post.md</span>
+    </header>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="index.html">home</a>
+      <a href="blog.html" aria-current="page">blog</a>
+      <a href="projects.html">projects</a>
+      <a href="about.html">about</a>
+      <a href="404.html">404</a>
+    </nav>
+
+    <header class="post-header">
+      <article class="prose">
+        <h1>The boring setup that prevents disaster</h1>
+      </article>
+      <div class="meta">
+        <span class="date">2026-05-07</span>
+        <span class="read">7 min read</span>
+        <span class="read">1,420 words</span>
+      </div>
+    </header>
+
+    <article class="prose">
+
+      <p>I have a rule for personal projects: if the setup is interesting, I've already lost. The setup should be so boring that I can describe it on a sticky note, and so recoverable that I can restore it on a fresh laptop in under an hour. Anything sexier than that is a future incident I haven't had yet.</p>
+
+      <p>This post is about what that looks like in practice. Not a guide. Just a description of what I currently do, what I used to do, and why I changed.</p>
+
+      <h2>The four-layer secrets thing</h2>
+
+      <p>Every secret in my life lives in exactly one of four places, in this order of preference:</p>
+
+      <ol>
+        <li><strong>Environment variable</strong>, scoped to a single shell session. Throwaway tokens, temporary API keys, anything I'm going to rotate the same day.</li>
+        <li><strong>OS keychain</strong>, via a thin <code class="inline">secrets</code> shell wrapper. Long-lived but boring: GitHub tokens, npm tokens, AWS keys for personal accounts.</li>
+        <li><strong>Age-encrypted file in a private repo.</strong> Things I need on more than one machine but don't want in a cloud password manager.</li>
+        <li><strong>Hardware token.</strong> The keys that, if leaked, would ruin my month. Domain registrar 2FA, root keys for the encrypted file in layer 3, recovery codes.</li>
+      </ol>
+
+      <p>The interesting thing about this list is that layer 1 is where almost everything starts, and almost nothing stays. A new API key gets pasted into a shell for a few minutes while I'm trying something. If it survives the experiment, it graduates to layer 2. If it ends up on a second machine, layer 3. If losing it would be catastrophic, layer 4.</p>
+
+      <p>The graduation step is manual on purpose. I don't want a script that automatically promotes secrets. I want to think about it every time.</p>
+
+      <h2>What the wrapper actually does</h2>
+
+      <p>The shell wrapper is twelve lines of bash. It is the only piece of "infrastructure" in the entire system:</p>
+
+      <pre class="code-block"><code><span class="tok-comment"># ~/.local/bin/secrets</span>
+<span class="tok-keyword">case</span> <span class="tok-string">"$1"</span> <span class="tok-keyword">in</span>
+  get) security find-generic-password -s <span class="tok-string">"$2"</span> -w ;;
+  set) security add-generic-password -U -s <span class="tok-string">"$2"</span> -a <span class="tok-string">"$USER"</span> -w <span class="tok-string">"$3"</span> ;;
+  ls)  security dump-keychain | grep <span class="tok-string">'^    "svce"'</span> | sort -u ;;
+  *)   <span class="tok-keyword">echo</span> <span class="tok-string">"usage: secrets {get|set|ls} &lt;name&gt; [value]"</span> ;;
+<span class="tok-keyword">esac</span>
+</code></pre>
+
+      <p>That's it. No daemon. No node_modules. No "first, install our CLI". When the laptop dies, I install macOS, restore the keychain from a Time Machine backup, and the wrapper works again. The wrapper itself is in my dotfiles, which are public, because there is nothing in it worth hiding.</p>
+
+      <blockquote>The best part of a boring system is that it doesn't get a chapter in your post-mortem.</blockquote>
+
+      <h2>Recoverable defaults</h2>
+
+      <p>The other half of "boring" is "recoverable". For every machine I use, I keep a single bootstrap script in a public dotfiles repo. It does three things:</p>
+
+      <ul>
+        <li>Installs a small fixed list of packages (homebrew, the usual suspects).</li>
+        <li>Symlinks every dotfile from the repo into <code class="inline">~/</code>.</li>
+        <li>Prints a numbered list of things I have to do by hand: log into the password manager, plug in the hardware token, restore the keychain.</li>
+      </ul>
+
+      <p>The list of manual steps is in the script, as comments, in the order I have to do them. It's not magic. It's a checklist with a fancy hat.</p>
+
+      <h2>What I changed, and why</h2>
+
+      <p>For about two years I ran a much fancier version of this. Encrypted vaults synced through a self-hosted thing, a custom CLI in Go, hooks that auto-promoted secrets between layers, the works. It was fun to build. It was a nightmare to recover.</p>
+
+      <p>When I had to restore it on a new machine, I spent a full evening fixing it. Half the issues were things the fancy CLI was doing for "convenience": writing config to a path that no longer existed, assuming a daemon was already running, requiring a network call to a service I hadn't restored yet.</p>
+
+      <p>The current setup took me one afternoon to write. I've restored it twice. The second time took twenty minutes. That's the entire pitch.</p>
+
+      <h2>The takeaway, if you want one</h2>
+
+      <p>I'm not saying don't build interesting things. I'm saying don't build interesting things in the layer that has to keep working when everything else is on fire. Put your creativity in the layer above. Make the load-bearing parts boring enough that you can describe them on a sticky note.</p>
+
+      <p>The full bootstrap script and the age-encrypted layer are in the <a href="projects.html">secrets-system</a> repo. There is, deliberately, nothing clever in it.</p>
+
+      <hr />
+
+      <div class="tag-chips">
+        <a href="tag-claude-code.html">#secrets</a>
+        <a href="tag-claude-code.html">#opsec</a>
+        <a href="tag-claude-code.html">#setup</a>
+        <a href="tag-claude-code.html">#bash</a>
+      </div>
+
+    </article>
+
+    <nav class="post-nav" aria-label="Adjacent posts">
+      <a href="post-the-boring-setup.html" class="prev">
+        <span class="label">← prev</span>
+        <span class="title">jq is the unix tool I reach for second-most</span>
+      </a>
+      <a href="post-the-boring-setup.html" class="next">
+        <span class="label">next →</span>
+        <span class="title">Built a minimal statusline for Claude Code</span>
+      </a>
+    </nav>
+
+    <footer class="footer">
+      <div class="left">© 2026 ii4ki · built with astro · MIT</div>
+      <div class="right">
+        <a href="#">github</a>
+        <a href="#">rss</a>
+        <a href="/cdn-cgi/l/email-protection#f09899b09588919d809c95de939f9d">email</a>
+      </div>
+    </footer>
+
+  </div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

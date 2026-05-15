@@ -1,0 +1,9 @@
+/* global.css — terminal theme; implement in Stage 3 */
+
+:root {
+	/* dark (default) */
+}
+
+:root[data-theme='light'] {
+	/* light overrides */
+}

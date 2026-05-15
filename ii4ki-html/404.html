@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>404 — file not found</title>
+  <meta name="description" content="The thing you were looking for is not here." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/global.css" />
+</head>
+<body data-screen-label="07 404">
+  <div class="shell">
+
+    <header class="path-strip">
+      <span class="path">[ <span class="sep">~/</span>404 ]</span>
+      <span class="meta">exit 127</span>
+    </header>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="index.html">home</a>
+      <a href="blog.html">blog</a>
+      <a href="projects.html">projects</a>
+      <a href="about.html">about</a>
+      <a href="404.html" aria-current="page">404</a>
+    </nav>
+
+    <section class="notfound">
+      <div class="prompt-line"><span class="prompt">$</span> cat <span style="color:var(--blue)">/var/www<span style="color:var(--dim)">$REQUEST_PATH</span></span></div>
+      <div class="err">cat: no such file or directory</div>
+      <div class="prompt-line"><span class="prompt">$</span> echo $?</div>
+      <div style="color:var(--text)">404</div>
+      <div class="hint" style="margin-top:24px">the thing you were looking for is not here. it may have moved, or it may never have existed. either way, the path returned nothing.</div>
+      <div class="hint">try one of these instead:</div>
+      <div class="tree" style="margin-top:8px">
+<span class="branch">├──</span> <a href="index.html">/</a>
+<span class="branch">├──</span> <a href="blog.html">/blog</a>
+<span class="branch">├──</span> <a href="projects.html">/projects</a>
+<span class="branch">└──</span> <a href="about.html">/about</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="left">© 2026 ii4ki · built with astro · MIT</div>
+      <div class="right">
+        <a href="#">github</a>
+        <a href="#">rss</a>
+        <a href="/cdn-cgi/l/email-protection#afc7c6efcad7cec2dfc3ca81ccc0c2">email</a>
+      </div>
+    </footer>
+
+  </div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

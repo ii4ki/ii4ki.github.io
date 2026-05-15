@@ -205,7 +205,7 @@ Commit: `ci: add deploy/pr workflows, dependabot, nvmrc, project README`
 
 1. ✅ `.nvmrc` — Node 22.
 2. ✅ `.github/dependabot.yml` — weekly npm + actions updates.
-3. ✅ `.github/workflows/_build.yml` — reusable: checkout, setup-node (cache: npm), `npm ci`, build, upload Pages artifact. All action SHAs pinned to commit hashes.
+3. ✅ `.github/workflows/_build.yml` — reusable: checkout, setup-node (cache: npm), `npm ci`, `astro check` (type check), build, lychee internal link check (`--offline`), upload Pages artifact. All action SHAs pinned to commit hashes. `@astrojs/check` + `typescript` added as devDependencies.
 4. ✅ `.github/workflows/deploy.yml` — `push: main` + `workflow_dispatch`, `pages: write` + `id-token: write`, no-cancel concurrency, two jobs: build + deploy.
 5. ✅ `.github/workflows/pr.yml` — `pull_request` only, `contents: read`, cancel-in-progress concurrency, one build job.
 6. ⬜ Branch protection on `main` — **manual step:** Settings → Branches → require `PR Check / build` status check, do not require PRs.
@@ -250,7 +250,7 @@ In rough order of payoff:
 ### Stage 7+ — Quality and reach (month 2+)
 
 1. **Vale** prose linting on PRs (style: `Microsoft` or `write-good`)
-2. **Weekly link check** — cron workflow, `linkinator` or `lychee`, opens issues on 404s
+2. **Weekly external link check** — cron workflow using lychee (already in build for internal links), checks external URLs, opens issues on 404s
 3. **Crosspost to dev.to / Hashnode** — workflow on push that calls their APIs with canonical URLs
 4. **Series support** — `series` field already in schema; add a `/series/[name].astro` route
 5. **AI-suggested tags on PR** — workflow that calls Claude API with the post body + existing tag list, comments suggestions

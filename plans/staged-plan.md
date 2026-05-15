@@ -199,29 +199,17 @@ All 23 files implemented. Commits: `feat(src): implement Stage 3 ii4ki design po
 
 Stage 3 leaves you with a complete-looking site running on localhost.
 
-### Stage 4 — CI/CD foundation (~1 hour)
+### Stage 4 — CI/CD foundation (~1 hour) ✅ DONE
 
-1. `.nvmrc` with Node 22.
-2. `.github/dependabot.yml`:
-   ```yaml
-   version: 2
-   updates:
-     - { package-ecosystem: npm, directory: /, schedule: { interval: weekly } }
-     - { package-ecosystem: github-actions, directory: /, schedule: { interval: weekly } }
-   ```
-3. `.github/workflows/_build.yml` — reusable. Inputs: none for now. Steps: checkout, setup-node (with `cache: npm`), `npm ci`, `npm run build`, upload Pages artifact.
-4. `.github/workflows/deploy.yml`:
-   - `on: push: branches: [main]` + `workflow_dispatch`
-   - `permissions: { contents: read, pages: write, id-token: write }`
-   - `concurrency: { group: pages, cancel-in-progress: false }` (don't cancel deploys; do cancel PR builds)
-   - Two jobs: `build` (uses `_build.yml`), `deploy` (needs build, runs `actions/deploy-pages`)
-5. `.github/workflows/pr.yml`:
-   - `on: pull_request`
-   - `permissions: { contents: read }`
-   - `concurrency: { group: pr-${{ github.ref }}, cancel-in-progress: true }`
-   - One job: build (uses `_build.yml`). No deploy.
-6. Branch protection on `main`: require `pr.yml / build` check, but **don't require PRs** (solo author). Direct pushes still trigger `deploy.yml`.
-7. README with a single build-status badge.
+Commit: `ci: add deploy/pr workflows, dependabot, nvmrc, project README`
+
+1. ✅ `.nvmrc` — Node 22.
+2. ✅ `.github/dependabot.yml` — weekly npm + actions updates.
+3. ✅ `.github/workflows/_build.yml` — reusable: checkout, setup-node (cache: npm), `npm ci`, build, upload Pages artifact. All action SHAs pinned to commit hashes.
+4. ✅ `.github/workflows/deploy.yml` — `push: main` + `workflow_dispatch`, `pages: write` + `id-token: write`, no-cancel concurrency, two jobs: build + deploy.
+5. ✅ `.github/workflows/pr.yml` — `pull_request` only, `contents: read`, cancel-in-progress concurrency, one build job.
+6. ⬜ Branch protection on `main` — **manual step:** Settings → Branches → require `PR Check / build` status check, do not require PRs.
+7. ✅ README — replaced Astro default with project README, deploy badge added.
 
 Stage 4 leaves you with a self-healing deploy. Push to main → live site within ~2 minutes.
 
@@ -298,9 +286,12 @@ Defer indefinitely: newsletter, TIL, analytics beyond GoatCounter, full auto-twe
 - ✅ Stage 1 — content-creator refactor done. `cc-draft` / `cc-publish` split is live.
 - ✅ Stage 2 — Astro scaffold done. `npm run dev` serves an empty-but-valid site.
 - ✅ Stage 3 — Design port done. All pages, layouts, and components implemented. `npm run build` passes clean.
-- ⬜ Stage 4 — **Next up.** CI/CD foundation. See steps above.
-- ⬜ Stage 5 — Launch. Push to origin, enable Pages, smoke-test.
+- ✅ Stage 4 — CI/CD done. Workflows committed, 3 ahead of origin. One manual step: set branch protection in GitHub Settings.
+- ⬜ Stage 5 — **Next up.** Launch. Push to origin, enable Pages, smoke-test.
 
-**To start Stage 4:** create `.github/workflows/_build.yml`, `deploy.yml`, `pr.yml`, `.github/dependabot.yml`, and a `README.md` badge. Then set branch protection in repo settings.
+**To start Stage 5:**
+1. Enable Pages in repo Settings → Pages → Source: "GitHub Actions" (if not already done)
+2. `git push -u origin main`
+3. Watch Actions tab, then smoke-test `https://ii4ki.github.io/`
 
-**Also pending (no blocker):** ship the first real post via `cc-publish 2026-05-07-the-boring-setup` before or during Stage 5 to have content for the launch smoke-test.
+**Branch protection (one-time, after push):** Settings → Branches → add rule for `main` → require `PR Check / build` status check, do not require PRs.

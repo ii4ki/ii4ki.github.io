@@ -25,7 +25,7 @@ jobs:
       - name: Check internal links
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
         with:
-          args: --no-progress --include-verbatim --offline dist/**/*.html
+          args: --no-progress --include-verbatim --offline --root-dir dist dist/**/*.html
           fail: true
 
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d

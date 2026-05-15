@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>OG card — ii4ki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+</head>
+<body style="margin:0;padding:0;background:#0a0a0c;font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;">
+
+  <!--
+    Satori render source.
+    Renders to exactly 1200×630.
+    Inline styles only. No CSS variables. No external stylesheets.
+    Replace the {{slug}}, {{title}}, {{date}} placeholders at render time.
+  -->
+
+  <div style="
+    width:1200px;
+    height:630px;
+    background:#0a0a0c;
+    color:#e6e6ea;
+    display:flex;
+    flex-direction:column;
+    padding:80px 88px;
+    box-sizing:border-box;
+    position:relative;
+  ">
+
+    <!-- scanlines overlay -->
+    <div style="
+      position:absolute;
+      top:0;left:0;right:0;bottom:0;
+      background-image:repeating-linear-gradient(to bottom, rgba(230,230,234,0.035) 0, rgba(230,230,234,0.035) 1px, transparent 1px, transparent 4px);
+      pointer-events:none;
+    "></div>
+
+    <!-- path strip -->
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:24px;
+      color:#44444f;
+      letter-spacing:0.02em;
+      padding-bottom:24px;
+      border-bottom:1px solid #2a2a33;
+    ">
+      <span>[ ~/blog/{{slug}} ]</span>
+      <span style="color:#8a8a96;font-size:20px;">cat post.md</span>
+    </div>
+
+    <!-- title block -->
+    <div style="
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      padding:48px 0;
+    ">
+      <div style="
+        font-size:28px;
+        color:#3fb950;
+        margin-bottom:24px;
+        letter-spacing:0.02em;
+      ">$ cat title.md</div>
+
+      <div style="
+        font-size:64px;
+        line-height:1.18;
+        font-weight:700;
+        color:#e6e6ea;
+        max-width:1024px;
+      ">{{title}}</div>
+    </div>
+
+    <!-- footer row -->
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding-top:24px;
+      border-top:1px solid #2a2a33;
+      font-size:22px;
+      color:#8a8a96;
+    ">
+      <span style="color:#ffb000;">{{date}}</span>
+      <span style="color:#8a8a96;">ii4ki <span style="color:#44444f;">·</span> ii4ki.dev</span>
+    </div>
+
+  </div>
+</body>
+</html>

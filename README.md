@@ -1,63 +1,87 @@
-# Astro Starter Kit: Blog
+# ii4ki.github.io
 
-```sh
-npm create astro@latest -- --template blog
+[![Deploy](https://github.com/ii4ki/ii4ki.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/ii4ki/ii4ki.github.io/actions/workflows/deploy.yml)
+
+Personal site and blog built with [Astro 6](https://astro.build), deployed to GitHub Pages at [ii4ki.github.io](https://ii4ki.github.io).
+
+## Stack
+
+- **Astro 6** — static site generator
+- **MDX** — extended markdown for blog posts
+- **@astrojs/sitemap** — auto-generated sitemap
+- **@astrojs/rss** — RSS feed at `/rss.xml`
+- **reading-time** — estimated read time injected via remark plugin
+
+## Project Structure
+
+```
+src/
+├── components/        # Astro UI components (Nav, Footer, PostCard, TagChip, …)
+├── content/
+│   ├── blog/          # Markdown posts (.md)
+│   └── projects/      # Project entries (.md)
+├── layouts/
+│   ├── Base.astro     # Root HTML shell
+│   └── Post.astro     # Blog post layout
+├── lib/
+│   └── tags.ts        # Tag aggregation utilities
+├── pages/
+│   ├── index.astro
+│   ├── about.astro
+│   ├── blog/          # Blog index + [slug] route
+│   ├── projects.astro
+│   ├── tags/          # Tags index + [tag] route
+│   ├── rss.xml.js
+│   └── 404.astro
+├── plugins/
+│   └── remark-reading-time.mjs
+├── styles/
+│   └── global.css
+└── consts.ts          # SITE_TITLE, SITE_DESCRIPTION
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Content Collections
 
-Features:
+### `blog`
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+Files in `src/content/blog/*.md`. Required frontmatter:
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+```yaml
+title: string
+description: string
+pubDate: date
+tags: [string]          # optional, defaults to []
+draft: boolean          # optional, defaults to false
+updatedDate: date       # optional
+series: string          # optional
+heroImage: string       # optional
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+### `projects`
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Files in `src/content/projects/*.md`. Required frontmatter:
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+```yaml
+name: string
+description: string
+status: LIVE | WIP | ARCHIVED
+stack: [string]
+repo: url               # optional
+demo: url               # optional
+writeup: string         # optional
+featured: boolean       # optional, defaults to false
+order: number           # optional, defaults to 0
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Commands
 
-## 🧞 Commands
+| Command           | Action                              |
+| :---------------- | :---------------------------------- |
+| `npm install`     | Install dependencies                |
+| `npm run dev`     | Dev server at `localhost:4321`      |
+| `npm run build`   | Build to `./dist/`                  |
+| `npm run preview` | Preview production build locally    |
 
-All commands are run from the root of the project, from a terminal:
+## Requirements
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-
-## Credit
-
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Node >= 22.12.0

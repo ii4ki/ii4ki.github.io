@@ -1,20 +1,40 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+import Post from '../../layouts/Post.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
+  const posts = (await getCollection('blog', p => !p.data.draft))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prevPost: posts[i + 1] ? { id: posts[i + 1].id, title: posts[i + 1].data.title } : undefined,
+      nextPost: posts[i - 1] ? { id: posts[i - 1].id, title: posts[i - 1].data.title } : undefined,
+    },
+  }));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
-const { Content } = await render(post);
+interface Props {
+  post: CollectionEntry<'blog'>;
+  prevPost?: { id: string; title: string };
+  nextPost?: { id: string; title: string };
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content, remarkPluginFrontmatter } = await render(post);
 ---
-
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<Post
+  id={post.id}
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  tags={post.data.tags}
+  minutesRead={remarkPluginFrontmatter.minutesRead}
+  words={remarkPluginFrontmatter.words}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</Post>

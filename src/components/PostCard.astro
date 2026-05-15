@@ -1,3 +1,15 @@
 ---
+interface Props {
+  href: string;
+  date: Date;
+  title: string;
+  meta: string;
+}
+const { href, date, title, meta } = Astro.props;
+const dateStr = date.toISOString().slice(0, 10);
 ---
-<!-- PostCard: implement in Stage 3 -->
+<a class="post-row" href={href}>
+  <span class="date">{dateStr}</span>
+  <span class="title">{title}</span>
+  <span class="post-meta">{meta}</span>
+</a>

@@ -1,3 +1,65 @@
 ---
+import Base from './Base.astro';
+import Comments from '../components/Comments.astro';
+import TagChip from '../components/TagChip.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  minutesRead?: string;
+  words?: number;
+  prevPost?: { id: string; title: string };
+  nextPost?: { id: string; title: string };
+}
+const { id, title, description, pubDate, tags, minutesRead, words, prevPost, nextPost } = Astro.props;
+const dateStr = pubDate.toISOString().slice(0, 10);
 ---
-<!-- Post: implement in Stage 3 -->
+<Base
+  title={`${title} — ii4ki`}
+  description={description}
+  path={`blog/${id}`}
+  pathMeta="cat post.md"
+  activeNav="blog"
+>
+  <header class="post-header">
+    <article class="prose">
+      <h1>{title}</h1>
+    </article>
+    <div class="meta">
+      <span class="date">{dateStr}</span>
+      {minutesRead && <span class="read">{minutesRead}</span>}
+      {words && <span class="read">{words.toLocaleString()} words</span>}
+    </div>
+  </header>
+
+  <article class="prose">
+    <slot />
+  </article>
+
+  <hr />
+  <div class="tag-chips">
+    {tags.map(tag => <TagChip tag={tag} />)}
+  </div>
+
+  {(prevPost || nextPost) && (
+    <nav class="post-nav" aria-label="Adjacent posts">
+      {prevPost ? (
+        <a href={`/blog/${prevPost.id}`} class="prev">
+          <span class="label">← prev</span>
+          <span class="title">{prevPost.title}</span>
+        </a>
+      ) : <div />}
+      {nextPost ? (
+        <a href={`/blog/${nextPost.id}`} class="next">
+          <span class="label">next →</span>
+          <span class="title">{nextPost.title}</span>
+        </a>
+      ) : <div />}
+    </nav>
+  )}
+
+  <Comments />
+</Base>

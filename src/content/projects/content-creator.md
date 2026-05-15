@@ -1,6 +1,6 @@
 ---
 name: content-creator
-description: Private CLI that turns Claude Code sessions into polished blog posts and Twitter threads.
+description: Private CLI that turns Claude Code sessions into polished blog posts and threads.
 status: WIP
 stack: [bash, claude-api]
 featured: true

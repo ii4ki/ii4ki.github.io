@@ -1,3 +1,33 @@
 ---
+import type { CollectionEntry } from 'astro:content';
+
+type Props = CollectionEntry<'projects'>['data'];
+const { name, description, status, stack, repo, demo, writeup } = Astro.props;
+
+const statusClass = status.toLowerCase();
+
+type LinkEntry = { key: string; label: string; href: string; display: string };
+const links: LinkEntry[] = [];
+if (repo) links.push({ key: 'repo', label: 'repo', href: repo, display: repo.replace(/^https?:\/\//, '') });
+if (demo) links.push({ key: 'demo', label: 'demo', href: demo, display: demo.replace(/^https?:\/\//, '') });
+if (writeup) links.push({ key: 'writeup', label: 'write-up', href: writeup, display: writeup });
 ---
-<!-- ProjectCard: implement in Stage 3 -->
+<article class="project-card">
+  <div class="head">
+    <span class="name">{name}</span>
+    <span class={`tag-bracket ${statusClass}`}>[{status}]</span>
+  </div>
+  {description && <p class="desc">{description}</p>}
+  <div class="stack"><span class="k">stack:</span> <span class="v">{stack.join(', ')}</span></div>
+  {links.length > 0 && (
+    <div class="links">
+      {links.map((link, i) => (
+        <div>
+          <span class="branch">{i < links.length - 1 ? '├──' : '└──'}</span>{' '}
+          <span class="k">{link.label}</span>{' '}
+          <a href={link.href}>{link.display}</a>
+        </div>
+      ))}
+    </div>
+  )}
+</article>

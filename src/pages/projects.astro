@@ -1,3 +1,27 @@
 ---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const pathMeta = `${projects.length} entries · sorted by recency`;
 ---
-<!-- projects: implement in Stage 3 -->
+<Base
+  title="projects — ii4ki"
+  description="Small tools I've shipped. One card per project."
+  path="projects"
+  pathMeta={pathMeta}
+  activeNav="projects"
+>
+  <section class="section" aria-label="Projects">
+    <div class="section-header">
+      <h2>projects</h2>
+      <span class="more">small things that do one thing well</span>
+    </div>
+    <div class="project-list">
+      {projects.map(p => <ProjectCard {...p.data} />)}
+    </div>
+  </section>
+</Base>

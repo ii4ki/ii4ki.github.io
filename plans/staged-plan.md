@@ -135,7 +135,7 @@ Everything in this stage is in your existing `content-creator` repo. No external
 
 Stage 1 leaves you with the draft → publish split working in isolation. The blog repo doesn't exist yet; you're just confirming the pipeline shape.
 
-### Stage 2 — Blog repo scaffold (~30 min)
+### Stage 2 — Blog repo scaffold (~30 min) ✅ DONE
 
 1. `cd ~/code && npm create astro@latest -- ii4ki.github.io --template blog --typescript strict --no-install --no-git`
 2. `cd ii4ki.github.io && git init -b main`
@@ -184,25 +184,18 @@ Stage 1 leaves you with the draft → publish split working in isolation. The bl
 
 Stage 2 leaves you with `npm run dev` running an empty-but-valid Astro site.
 
-### Stage 3 — Design port (~half a day)
+### Stage 3 — Design port (~half a day) ✅ DONE
 
-1. Drop CD's `global.css` (once you get it from Stage A.4) into `src/styles/global.css`. Import it in `src/layouts/Base.astro`.
-2. Extract `Base.astro` from any of the HTML files: `<head>`, font preconnect, path-strip header, nav, footer, body shell. Slot for page content.
-3. Extract `Post.astro` wrapping `<article class="prose">` and the post header + meta.
-4. Extract components from CD's markup: `PathStrip`, `Nav`, `Footer`, `PostCard`, `ProjectCard`, `TagChip`, `Cursor`.
-5. Build pages:
-   - `index.astro` — port from `index.html`, replace hardcoded recent-posts with `getCollection('blog').sort().slice(0,5)` and featured projects with `getCollection('projects').filter(p => p.data.featured)`.
-   - `about.astro` — from CD's about deliverable.
-   - `projects.astro` — iterate `getCollection('projects').sort(byOrder)`.
-   - `blog/index.astro` — all posts, filter out `draft: true`.
-   - `blog/[...slug].astro` — `getStaticPaths` from blog collection, render via `<Post>` layout.
-   - `tags/index.astro` — list all unique tags with counts.
-   - `tags/[tag].astro` — `getStaticPaths` from unique tags, list posts.
-   - `404.astro` — port from CD.
-   - `rss.xml.js` — Astro's `@astrojs/rss` standard.
-6. Wire `remark-reading-time.mjs` (exact code is in `initial-draft.md`).
-7. Add the light-theme CSS variable block under `:root[data-theme='light']`, plus a tiny `ThemeToggle.astro` island with localStorage + system preference detection. Set `data-theme` on `<html>` before first paint via a 4-line inline script in `<head>` to avoid FOUC.
-8. **Ship the first real post** from content-creator: `cd ~/code/content-creator && cc-publish 2026-05-07-the-boring-setup`. Verify it builds.
+All 23 files implemented. Commits: `feat(src): implement Stage 3 ii4ki design port` + `chore(refs): update HTML mockups, add about/og-template/tags`.
+
+1. ✅ `src/styles/global.css` — complete ii4ki terminal design (dark/light palettes, all component classes, `.theme-btn` appended).
+2. ✅ `src/layouts/Base.astro` — shell with FOUC-prevention inline script, `<PathStrip>`, `<Nav>`, `<slot />`, `<Footer>`.
+3. ✅ `src/layouts/Post.astro` — wraps Base, renders post header + meta, `<slot />` in `.prose`, tag chips, prev/next nav.
+4. ✅ Components: `PathStrip`, `Nav`, `ThemeToggle`, `Footer`, `Cursor`, `TagChip`, `PostCard`, `ProjectCard`, `Comments` (stub).
+5. ✅ Pages: `index`, `about`, `blog/index`, `blog/[...slug]`, `projects`, `tags/index`, `tags/[tag]`, `404`, `rss.xml.js`.
+6. ✅ Retired: `BlogPost.astro`, `Header.astro`, `HeaderLink.astro`, placeholder images.
+7. ✅ `about.astro` content reflects actual stack (opencode, vercel, cloudflare) and GitHub handle (`bitcoin21ideas`).
+8. ⬜ **Ship the first real post** from content-creator: `cd ~/code/content-creator && cc-publish 2026-05-07-the-boring-setup`. Verify it builds. (Deferred to after Stage 4 or as part of Stage 5 smoke-test.)
 
 Stage 3 leaves you with a complete-looking site running on localhost.
 
@@ -303,9 +296,11 @@ Defer indefinitely: newsletter, TIL, analytics beyond GoatCounter, full auto-twe
 
 - ✅ Stage 0 — Prerequisites (org, repo created; Pages + Discussions to enable before Stage 5 push)
 - ✅ Stage 1 — content-creator refactor done. `cc-draft` / `cc-publish` split is live.
-- ⬜ Stage 2 — **Next up.** Scaffold `ii4ki.github.io` Astro repo locally. See steps above.
-- ⬜ Stages 3-5 — Follow in order after Stage 2.
+- ✅ Stage 2 — Astro scaffold done. `npm run dev` serves an empty-but-valid site.
+- ✅ Stage 3 — Design port done. All pages, layouts, and components implemented. `npm run build` passes clean.
+- ⬜ Stage 4 — **Next up.** CI/CD foundation. See steps above.
+- ⬜ Stage 5 — Launch. Push to origin, enable Pages, smoke-test.
 
-**To start Stage 2:** open a new session in (or targeting) `~/code/ii4ki.github.io`, paste this plan as context, and execute Stage 2 steps. The session does not need the `content-creator` repo open.
+**To start Stage 4:** create `.github/workflows/_build.yml`, `deploy.yml`, `pr.yml`, `.github/dependabot.yml`, and a `README.md` badge. Then set branch protection in repo settings.
 
-**Independently (no blocker):** kick off the CD asks from Section A.4 (global.css, about, tags, OG, favicon). CD work doesn't block Stage 2.
+**Also pending (no blocker):** ship the first real post via `cc-publish 2026-05-07-the-boring-setup` before or during Stage 5 to have content for the launch smoke-test.

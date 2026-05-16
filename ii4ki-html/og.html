@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ii4ki — OG image (1200×630)</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0a0a0c;
+      --text:   #e6e6ea;
+      --muted:  #8a8a96;
+      --dim:    #44444f;
+      --border: #2a2a33;
+      --accent: #ffb000;
+      --green:  #3fb950;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #050507;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 40px;
+    }
+
+    /* The OG card — exact 1200×630 capture target */
+    .og {
+      position: relative;
+      width: 1200px;
+      height: 630px;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 72px 88px;
+    }
+
+    /* Subtle horizontal scanlines (matches hero) */
+    .og::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        rgba(230, 230, 234, 0.035) 0,
+        rgba(230, 230, 234, 0.035) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Faint vignette so center content has air */
+    .og::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Top thin rule + path strip — keeps OG consistent with site chrome */
+    .top-strip {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 20px;
+      color: var(--dim);
+      letter-spacing: 0.02em;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-strip .path .sep { color: var(--dim); }
+    .top-strip .meta { color: var(--muted); font-size: 18px; }
+
+    /* Main content */
+    .content {
+      position: relative;
+      z-index: 3;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .lockup {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .logo {
+      width: 132px;
+      height: 132px;
+      flex: none;
+      display: block;
+    }
+
+    .title {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+      font-size: 168px;
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .subhead {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 400;
+      font-size: 34px;
+      line-height: 1.3;
+      color: var(--text);
+      margin: 0;
+      letter-spacing: 0.005em;
+    }
+    .subhead .arrow {
+      color: var(--green);
+      margin-right: 14px;
+    }
+
+    .url {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 1.2;
+      color: var(--accent);
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+    .url .prompt {
+      color: var(--dim);
+      margin-right: 12px;
+    }
+
+    /* Bottom strip — quiet meta */
+    .bottom-strip {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 22px;
+      border-top: 1px solid var(--border);
+      font-size: 18px;
+      color: var(--muted);
+    }
+    .bottom-strip .left { color: var(--dim); letter-spacing: 0.02em; }
+    .bottom-strip .right { color: var(--muted); }
+    .bottom-strip .right .dot { color: var(--dim); margin: 0 10px; }
+
+    /* Capture target — also rendered at 1× for preview convenience */
+    @media (max-width: 1280px) {
+      body { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="og" id="og">
+
+    <div class="top-strip">
+      <span class="path">[ <span class="sep">~/</span>ii4ki ]</span>
+      <span class="meta">og-image · 1200×630</span>
+    </div>
+
+    <div class="content">
+
+      <div class="lockup">
+        <!-- JBM 00 logo (favicon.svg) inlined so the card is self-contained -->
+        <svg class="logo" viewBox="0 0 16 16" shape-rendering="geometricPrecision" aria-hidden="true">
+          <g fill="#ffb000">
+            <path fill-rule="evenodd" d="M3.5 0A3.5 3.5 0 0 0 0 3.5v9a3.5 3.5 0 0 0 7 0v-9A3.5 3.5 0 0 0 3.5 0Zm0 2A1.5 1.5 0 0 0 2 3.5v9a1.5 1.5 0 0 0 3 0v-9A1.5 1.5 0 0 0 3.5 2Z"/>
+            <rect x="2.5" y="7.25" width="2" height="1.5" rx="0.5"/>
+            <path fill-rule="evenodd" d="M12.5 0A3.5 3.5 0 0 0 9 3.5v9a3.5 3.5 0 0 0 7 0v-9A3.5 3.5 0 0 0 12.5 0Zm0 2A1.5 1.5 0 0 0 11 3.5v9a1.5 1.5 0 0 0 3 0v-9A1.5 1.5 0 0 0 12.5 2Z"/>
+            <rect x="11.5" y="7.25" width="2" height="1.5" rx="0.5"/>
+          </g>
+        </svg>
+
+        <h1 class="title">II4KI</h1>
+      </div>
+
+      <p class="subhead">
+        <span class="arrow" style="color: rgb(255, 176, 0)">&gt;</span>all things AI, automation &amp; software development
+      </p>
+
+      <p class="url">
+        <span class="prompt">$</span>ii4ki.github.io
+      </p>
+
+    </div>
+
+    <div class="bottom-strip">
+      <span class="left">ii4ki 1.0.0 #astro SMP 2026-05-15 MIT</span>
+      <span class="right">github · rss · email</span>
+    </div>
+
+  </div>
+
+</body>
+</html>

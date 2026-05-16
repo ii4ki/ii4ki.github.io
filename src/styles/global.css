@@ -178,6 +178,7 @@ hr {
 .hero-stack .arrow  { color: var(--dim); }
 .hero-stack .line   { display: block; color: var(--text); }
 .hero-stack .line + .line { margin-top: 6px; }
+.hero-stack .about-link { color: var(--green); border-bottom: none; }
 
 .cursor {
   display: inline-block;

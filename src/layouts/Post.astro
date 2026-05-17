@@ -63,3 +63,32 @@ const dateStr = pubDate.toISOString().slice(0, 10);
 
   <Comments />
 </Base>
+
+<script>
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const btn = target.closest('.code-copy');
+    if (!(btn instanceof HTMLButtonElement)) return;
+    const wrap = btn.closest('.code-wrap');
+    const pre = wrap?.querySelector('pre');
+    if (!pre) return;
+    const text = pre.innerText;
+    const restore = () => {
+      btn.removeAttribute('data-state');
+      btn.textContent = 'copy';
+    };
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        btn.dataset.state = 'copied';
+        btn.textContent = 'copied';
+        window.setTimeout(restore, 1600);
+      })
+      .catch(() => {
+        btn.dataset.state = 'error';
+        btn.textContent = 'error';
+        window.setTimeout(restore, 1600);
+      });
+  });
+</script>

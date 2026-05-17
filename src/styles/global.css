@@ -433,9 +433,10 @@ hr {
 .prose blockquote {
   margin: 0;
   padding: 4px 0 4px 20px;
-  border-left: 1px solid var(--border);
+  border-left: 2px solid var(--accent);
   color: var(--muted);
 }
+.prose blockquote strong { color: var(--text); }
 .prose ul, .prose ol {
   margin: 0;
   padding-left: 1.6em;
@@ -474,10 +475,89 @@ hr {
   font-size: inherit;
 }
 
-/* Syntax tokens — locked to 3 colors */
-.tok-comment { color: var(--dim);    font-style: italic; }
-.tok-keyword { color: var(--accent); }
-.tok-string  { color: var(--muted);  }
+/* Shiki dual-theme: dark is default (inline `color`), light is swapped in
+   from the --shiki-light CSS variable on each token span when
+   data-theme="light" is set on <html>. */
+:root[data-theme="light"] .astro-code,
+:root[data-theme="light"] .astro-code span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+  font-style: var(--shiki-light-font-style) !important;
+  font-weight: var(--shiki-light-font-weight) !important;
+  text-decoration: var(--shiki-light-text-decoration) !important;
+}
+
+/* Code block wrapper (from rehype-code-copy): adds top strip with lang
+   label and copy button. Pre keeps its own background/border; the toolbar
+   sits inside the same visual container. */
+.code-wrap {
+  position: relative;
+}
+.code-wrap pre {
+  padding-top: 38px;
+  padding-right: 56px;
+}
+.code-toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 0 16px;
+  font-size: var(--fs-xs);
+  color: var(--dim);
+  pointer-events: none;
+  z-index: 1;
+}
+.code-lang {
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  color: var(--dim);
+}
+.code-copy {
+  pointer-events: auto;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--fs-xs);
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: color 120ms linear, border-color 120ms linear;
+}
+.code-copy:hover {
+  color: var(--text);
+  border-color: var(--border);
+}
+.code-copy:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+  color: var(--text);
+}
+.code-copy[data-state="copied"] {
+  color: var(--green);
+  border-color: var(--green);
+}
+.code-copy[data-state="error"] {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+/* Loosen breathing room around heavy blocks (code, blockquote, code-wrap).
+   The universal `.prose > * + *` rule at 1.1em is right for paragraph
+   pairs but cramped for visual blocks. Headings and <hr> keep their own
+   larger margins via their own rules. */
+.prose > * + pre,
+.prose > * + blockquote,
+.prose > * + .code-wrap,
+.prose > pre + *:not(h1):not(h2):not(h3):not(hr),
+.prose > blockquote + *:not(h1):not(h2):not(h3):not(hr),
+.prose > .code-wrap + *:not(h1):not(h2):not(h3):not(hr) {
+  margin-top: 1.8em;
+}
 
 /* ─── Tag chips (post bottom) ─── */
 .tag-chips {

@@ -10,8 +10,9 @@ interface Props {
   path: string;
   pathMeta?: string;
   activeNav?: 'home' | 'blog' | 'projects' | 'about' | 'tags';
+  image?: string;
 }
-const { title, description, path, pathMeta, activeNav } = Astro.props;
+const { title, description, path, pathMeta, activeNav, image } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -23,7 +24,7 @@ const { title, description, path, pathMeta, activeNav } = Astro.props;
         document.documentElement.dataset.theme = t;
       })();
     </script>
-    <BaseHead title={title} description={description} />
+    <BaseHead title={title} description={description} image={image} />
     <script defer src="https://cloud.umami.is/script.js" data-website-id="fe3ab619-6318-4698-8e50-bdd1a6d97a0f" is:inline></script>
   </head>
   <body>

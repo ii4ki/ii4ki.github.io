@@ -23,6 +23,7 @@ const dateStr = pubDate.toISOString().slice(0, 10);
   path={`blog/${id}`}
   pathMeta="cat post.md"
   activeNav="blog"
+  image={new URL(`/og/${id}.png`, Astro.site).href}
 >
   <header class="post-header">
     <article class="prose">

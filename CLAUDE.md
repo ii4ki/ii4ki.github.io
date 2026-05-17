@@ -24,9 +24,13 @@ This is an Astro 6 static site deploying to `https://ii4ki.github.io`. All routi
 - `blog` — Markdown posts, filtered by `draft: false` at query time, sorted by `pubDate` descending
 - `projects` — filtered/sorted by `featured` and `order` on the home page; `status` drives CSS class names (`live`, `wip`, `archived`)
 
-**Styling** — plain CSS only, no framework. All styles live in `src/styles/global.css`. Dark theme is `:root` (default); light is `:root[data-theme="light"]`. Custom properties (`--accent`, `--green`, `--muted`, etc.) are the entire design token system. Syntax tokens use only three colors: `--dim`, `--accent`, `--muted`.
+**Styling** — plain CSS only, no framework. All styles live in `src/styles/global.css`. Dark theme is `:root` (default); light is `:root[data-theme="light"]`. Custom properties (`--accent`, `--green`, `--muted`, etc.) are the entire design token system. Syntax tokens use only three colors: `--dim` (comments), `--accent` (keywords, keys, builtins, variables), `--muted` (strings).
 
 **Theme toggle** — `localStorage.getItem('theme')` with a `data-theme` attribute on `<html>`. The inline `<script is:inline>` in `Base.astro` applies the stored theme before render to prevent flash.
+
+**Syntax highlighting** — Shiki via Astro's built-in `markdown.shikiConfig`. Custom dual themes at `src/themes/shiki-ii4ki.mjs` (`ii4kiDark` + `ii4kiLight`) map only the three syntax colors above; everything else falls back to `--text`. `defaultColor: 'dark'` puts the dark hex inline; `:root[data-theme="light"] .astro-code` rules in `global.css` swap to the `--shiki-light` CSS variables on theme toggle.
+
+**Code blocks** — every Markdown `<pre>` is wrapped by `src/plugins/rehype-code-copy.mjs` in a `.code-wrap` container with a toolbar: `.code-lang` (language label, left) + `.code-copy` (copy button, right). The click handler lives at the bottom of `Post.astro` as a single delegated listener — it reads `pre.innerText` at click time, so the raw source isn't duplicated into the HTML.
 
 **Reading time** — injected by the custom remark plugin at `src/plugins/remark-reading-time.mjs`. It adds `minutesRead` and `words` to the post's `remarkPluginFrontmatter`, which `src/pages/blog/[...slug].astro` forwards to `Post.astro` as props.
 
@@ -49,4 +53,4 @@ This is an Astro 6 static site deploying to `https://ii4ki.github.io`. All routi
 - **`src/consts.ts`** — site-wide constants (`SITE_TITLE`, `SITE_DESCRIPTION`); add new globals here
 - Draft posts (`draft: true`) are excluded at the collection query level, not the file level
 - Blog post filenames conventionally include the date: `YYYY-MM-DD-slug.md`
-- Comments are powered by Giscus (`src/components/Comments.astro`), backed by Discussions in this repo's `Announcements` category, mapped by `pathname`. The widget is lazy-loaded via `IntersectionObserver`. Theme is a custom CSS URL (`/giscus-dark.css` or `/giscus-light.css`); a `MutationObserver` on `<html>[data-theme]` re-skins the iframe live on theme toggle.
+- Comments are powered by Giscus (`src/components/Comments.astro`), backed by Discussions in this repo's `Announcements` category, mapped by `pathname`. The widget is lazy-loaded via `IntersectionObserver`. Theme is a custom CSS URL (`/giscus-dark.css` or `/giscus-light.css`); a `MutationObserver` on `<html>[data-theme]` re-skins the iframe live on theme toggle. The host's `data-loaded` attribute is a three-state machine — `false` → `pending` (script appended) → `ready` (iframe `load` fired) — and the loading placeholder shows for the first two.

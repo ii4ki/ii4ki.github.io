@@ -11,6 +11,8 @@ Personal site and blog built with [Astro 6](https://astro.build), deployed to Gi
 - **@astrojs/sitemap** — auto-generated sitemap
 - **@astrojs/rss** — RSS feed at `/rss.xml`
 - **reading-time** — estimated read time injected via remark plugin
+- **Shiki** — syntax highlighting via two custom dual-themes (`src/themes/shiki-ii4ki.mjs`) mapped to the site's three-color token palette; swaps live on dark/light toggle
+- **Code copy buttons** — rehype plugin (`src/plugins/rehype-code-copy.mjs`) wraps each block in a toolbar with a language label and copy button
 - **Giscus** — comments backed by GitHub Discussions, lazy-loaded, custom-themed to match the site
 
 ## Project Structure
@@ -35,9 +37,12 @@ src/
 │   ├── rss.xml.js
 │   └── 404.astro
 ├── plugins/
-│   └── remark-reading-time.mjs
+│   ├── remark-reading-time.mjs
+│   └── rehype-code-copy.mjs
 ├── styles/
 │   └── global.css
+├── themes/
+│   └── shiki-ii4ki.mjs  # dual Shiki themes (dark + light)
 └── consts.ts          # SITE_TITLE, SITE_DESCRIPTION
 ```
 

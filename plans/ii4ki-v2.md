@@ -4,7 +4,7 @@ Stages 1–5 from [staged-plan.md](./staged-plan.md) are complete. The site is l
 
 It replaces stages 6 and 7 of the original plan. Anything not covered here defers indefinitely.
 
-**Current priorities (decided 2026-05-17):** Stage 8.3 (Giscus) ✅ done, 8.2 (Satori OG) and 8.4 (code copy buttons) come next. Stage 6 (dev.to crosspost) follows. Stage 7 (Resend newsletter) is **deferred until there's a real reader signal** — no point provisioning a list with no subscribers waiting for one. Stage 8.6 (analytics) is already done via Umami.
+**Current priorities (decided 2026-05-17):** Stage 8.3 (Giscus) ✅ done, 8.4 (code copy buttons) ✅ done. Stage 8.2 (Satori OG) is next, then Stage 6 (dev.to crosspost). Stage 7 (Resend newsletter) is **deferred until there's a real reader signal** — no point provisioning a list with no subscribers waiting for one. Stage 8.6 (analytics) is already done via Umami.
 
 ---
 
@@ -304,11 +304,18 @@ Shipped in commit `189285e`. Wiring:
 **Pros:** free, no DB, comments are GitHub Discussions threads you already have notifications for.
 **Cons:** requires a GitHub account to comment. Acceptable for a dev-audience blog.
 
-### 8.4 Code copy buttons (~1 hour)
+### 8.4 Code copy buttons — ✅ DONE (2026-05-17)
 
-Rehype plugin in `src/plugins/rehype-code-copy.mjs` that wraps `<pre>` with a positioned `<button>`. One tiny inline script handles `navigator.clipboard.writeText(el.textContent)`. Pure CSS for hover/visited states.
+Shipped alongside a broader code-block polish pass. Wiring:
 
-**Pros:** UX upgrade users notice within ten seconds.
+- `src/plugins/rehype-code-copy.mjs` wraps every Markdown `<pre>` in a `.code-wrap` container with a `.code-toolbar` row: `.code-lang` (left, reads `data-language` from Shiki's pre output) + `.code-copy` button (right).
+- Delegated click handler at the bottom of `Post.astro` reads `pre.innerText` at click time (no source duplication into HTML) and flips `data-state` between `copied` (green) / `error` (red) for ~1.6s.
+- Custom dual Shiki themes at `src/themes/shiki-ii4ki.mjs` map only the site's 3 syntax-token colors (`--dim` comments, `--accent` keywords/keys/builtins/vars, `--muted` strings). Light/dark swap via `--shiki-light` CSS variables.
+- Prose spacing tightened around block elements: `.prose > * + pre/blockquote/.code-wrap` and the reverse pair now use 1.8em instead of the universal 1.1em — paragraphs still get 1.1em; headings/`hr` keep their existing larger margins.
+- Blockquote left border bumped to **2px `var(--accent)`** so callouts read as callouts.
+- Giscus loading state turned into a three-step machine (`false` → `pending` → `ready`) so the loading placeholder stays visible until the iframe `load` event fires.
+
+**Pros:** UX upgrade users notice within ten seconds. Code blocks now blend with the site palette instead of importing GitHub Dark's foreign colors.
 **Cons:** none worth mentioning.
 
 ### 8.5 `/now` page (~30 min)
@@ -427,7 +434,7 @@ Polish-then-amplify: every cross-posted article lands on a page that looks finis
 
 ```text
 session 1   Stage 8.3 (Giscus)          — ✅ done 2026-05-17 (commit 189285e)
-session 2   Stage 8.4 (copy buttons)    — small rehype plugin; ~1 hour
+session 2   Stage 8.4 (copy buttons)    — ✅ done 2026-05-17 (also: custom Shiki themes, prose spacing, blockquote accent, Giscus load-state fix)
 session 3   Stage 8.2 (Satori OG)       — port CD's OG template to JSX; ~3 hours
 session 4   Stage 6   (dev.to crosspost) — sidecar state + workflow; ~3–4 hours
 later       Stage 8.1 (Pagefind search) — once corpus has 5+ posts, otherwise search has nothing to find

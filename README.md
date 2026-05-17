@@ -14,11 +14,14 @@ Personal site and blog built with [Astro 6](https://astro.build), deployed to Gi
 - **Shiki** — syntax highlighting via two custom dual-themes (`src/themes/shiki-ii4ki.mjs`) mapped to the site's three-color token palette; swaps live on dark/light toggle
 - **Code copy buttons** — rehype plugin (`src/plugins/rehype-code-copy.mjs`) wraps each block in a toolbar with a language label and copy button
 - **Giscus** — comments backed by GitHub Discussions, lazy-loaded, custom-themed to match the site
+- **OG images** — per-post 1200×630 cards prerendered at build time via Satori + `@resvg/resvg-js`; template at `src/lib/og.ts`, route at `src/pages/og/[...slug].png.ts`
 
 ## Project Structure
 
 ```
 src/
+├── assets/
+│   └── fonts/         # Vendored JetBrains Mono (used at build time for OG images)
 ├── components/        # Astro UI components (Nav, Footer, PostCard, TagChip, …)
 ├── content/
 │   ├── blog/          # Markdown posts (.md)
@@ -27,11 +30,13 @@ src/
 │   ├── Base.astro     # Root HTML shell
 │   └── Post.astro     # Blog post layout
 ├── lib/
-│   └── tags.ts        # Tag aggregation utilities
+│   ├── tags.ts        # Tag aggregation utilities
+│   └── og.ts          # Satori template + renderer for per-post OG images
 ├── pages/
 │   ├── index.astro
 │   ├── about.astro
 │   ├── blog/          # Blog index + [slug] route
+│   ├── og/            # Dynamic [...slug].png.ts route — prerendered per post
 │   ├── projects.astro
 │   ├── tags/          # Tags index + [tag] route
 │   ├── rss.xml.js

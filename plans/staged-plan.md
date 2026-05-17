@@ -242,7 +242,7 @@ In rough order of payoff:
 
 1. **Pagefind** — `npm install -D pagefind`, run `pagefind --site dist` as a post-build step in `_build.yml`, add a `Search.astro` component with `/pagefind/pagefind-ui.js`. Lazy-loaded behind `Ctrl+K`.
 2. **Giscus** — run giscus.app config wizard against the repo, paste values into `Comments.astro`, drop on `[...slug].astro` below the post. Lazy-load with `loading="lazy"` and an `IntersectionObserver`.
-3. **OG image generation via Satori** — script in `scripts/generate-og.mjs` that runs in `_build.yml`, iterates blog collection, emits `public/og/<slug>.png`. Use CD's OG template HTML as the source.
+3. ✅ **OG image generation via Satori** — done. Implemented as a dynamic Astro route (`src/pages/og/[...slug].png.ts`) instead of a standalone script — Satori template lives in `src/lib/og.ts`, fonts vendored under `src/assets/fonts/`, PNGs prerendered to `dist/og/<slug>.png` and referenced from `BaseHead` via an `image` prop threaded through `Base.astro` and `Post.astro`. Title font auto-shrinks; logo + `text-indent` lets wrapped title lines reclaim the full width.
 4. **Code copy buttons** — rehype plugin in `src/plugins/rehype-code-copy.mjs`. Pure CSS button, tiny inline script for the click handler.
 5. **`/now` page** — new top-level route, single markdown file at `src/content/meta/now.md`, manual update cadence.
 6. **Lighthouse CI** — add `lighthouse-ci.yml` workflow that runs on PRs, perf floor 95. Don't fail the build for the first month; collect data first.

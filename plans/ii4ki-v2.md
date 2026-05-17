@@ -4,7 +4,7 @@ Stages 1–5 from [staged-plan.md](./staged-plan.md) are complete. The site is l
 
 It replaces stages 6 and 7 of the original plan. Anything not covered here defers indefinitely.
 
-**Current priorities (decided 2026-05-17):** Stage 8.3 (Giscus) ✅ done, 8.4 (code copy buttons) ✅ done. Stage 8.2 (Satori OG) is next, then Stage 6 (dev.to crosspost). Stage 7 (Resend newsletter) is **deferred until there's a real reader signal** — no point provisioning a list with no subscribers waiting for one. Stage 8.6 (analytics) is already done via Umami.
+**Current priorities (decided 2026-05-17):** Stage 8.3 (Giscus) ✅ done, 8.4 (code copy buttons) ✅ done, 8.2 (Satori OG) ✅ done. Stage 6 (dev.to crosspost) is next. Stage 7 (Resend newsletter) is **deferred until there's a real reader signal** — no point provisioning a list with no subscribers waiting for one. Stage 8.6 (analytics) is already done via Umami.
 
 ---
 
@@ -279,16 +279,21 @@ The right call. Algolia is overkill, paid, and unnecessary; Pagefind is built fo
 
 Sources: [Pagefind docs](https://pagefind.app/), [Starlight uses Pagefind by default](https://starlight.astro.build/guides/site-search/), [search engine comparison](https://sarthakmishra.com/blog/astro-search-comparison).
 
-### 8.2 OG images via Satori (~3 hours)
+### 8.2 OG images via Satori — ✅ DONE (2026-05-17)
 
-**Steps:**
-1. `npm install -D satori @resvg/resvg-js` (the JS build, not WASM — we run on Linux runner with full Node, sharp is already a dependency).
-2. New file `src/pages/og/[...slug].png.ts` — a dynamic route returning a PNG. Astro 6 supports this via `getStaticPaths` for prerender. For every post, emit `og/<slug>.png` at build.
-3. Pull the "OG image template" CD already produced (per the original plan's Stage 0 design assets) and port to Satori JSX. Satori only supports flexbox, no grid or absolute positioning — verify CD's template doesn't use them.
-4. Update `<BaseHead />` to set `<meta property="og:image" content="https://ii4ki.github.io/og/<slug>.png" />` and `twitter:card`.
+Shipped in this session. Wiring:
+
+- `satori` + `@resvg/resvg-js` added as devDependencies (JS build, not WASM).
+- Template lives in `src/lib/og.ts` as plain object trees (no JSX/TSX configured — Satori accepts the React-element shape directly, which sidesteps any Astro tsconfig wiring).
+- Route at `src/pages/og/[...slug].png.ts` uses `getStaticPaths` over the blog collection and returns a PNG `Response` per post; Astro prerenders each to `dist/og/<slug>.png` (~1.3s/post, ~85KB output).
+- JetBrains Mono Regular + Bold vendored under `src/assets/fonts/` and loaded with `readFile(resolve(process.cwd(), ...))` — the endpoint only ever runs at build time, so cwd is reliably the project root.
+- Pseudo-element gotcha resolved: Satori ignores `::before`/`::after`, so the CD template's scanlines and vignette are emitted as real absolute-positioned child divs layered behind the foreground stack.
+- Title auto-shrinks across 4 buckets (96/84/68/56px) by character count; the logo is positioned absolutely at the start of the title block with `text-indent` on the text so wrapped lines reclaim the full width (text-indent is honored by Satori).
+- `BaseHead.astro` accepts an optional `image` prop; `Base.astro` forwards it; `Post.astro` sets `image={new URL('/og/' + id + '.png', Astro.site).href}`. Non-post pages keep the fallback `/og-image.png`.
+- Design diverges from the original `ii4ki-html/og.html` in three ways requested during this session: dropped the `$ii4ki.github.io` URL line to free vertical space; `>` arrow in subhead recolored from `--green` to `--accent`; bottom-strip text simplified to `ii4ki 1.0.0 #astro MIT` (date removed).
 
 **Pros:** sharable links look like a designed site, not a fallback favicon. Free, build-time, no third-party.
-**Cons:** rebuild time goes up by ~50ms per post; negligible until ~500 posts. Satori's flexbox-only constraint can frustrate designers.
+**Cons:** rebuild time goes up by ~1.3s per post (slower than the ~50ms estimate due to resvg PNG encoding); negligible at current corpus size, worth revisiting if the blog ever has hundreds of posts.
 
 Sources: [astro-satori](https://github.com/kevinzunigacuellar/astro-satori), [dietcode.io build-time OG guide](https://dietcode.io/p/astro-og/), [Jilles Soeters — build vs runtime tradeoffs](https://jilles.me/og-images-astro-build-vs-runtime/).
 
@@ -435,7 +440,7 @@ Polish-then-amplify: every cross-posted article lands on a page that looks finis
 ```text
 session 1   Stage 8.3 (Giscus)          — ✅ done 2026-05-17 (commit 189285e)
 session 2   Stage 8.4 (copy buttons)    — ✅ done 2026-05-17 (also: custom Shiki themes, prose spacing, blockquote accent, Giscus load-state fix)
-session 3   Stage 8.2 (Satori OG)       — port CD's OG template to JSX; ~3 hours
+session 3   Stage 8.2 (Satori OG)       — ✅ done 2026-05-17 (dynamic Astro route, vendored JBM, text-indent logo trick)
 session 4   Stage 6   (dev.to crosspost) — sidecar state + workflow; ~3–4 hours
 later       Stage 8.1 (Pagefind search) — once corpus has 5+ posts, otherwise search has nothing to find
 later       Stage 8.5 (/now), 8.7 (Lighthouse), Stage 9.* — opportunistic

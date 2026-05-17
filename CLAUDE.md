@@ -49,4 +49,4 @@ This is an Astro 6 static site deploying to `https://ii4ki.github.io`. All routi
 - **`src/consts.ts`** — site-wide constants (`SITE_TITLE`, `SITE_DESCRIPTION`); add new globals here
 - Draft posts (`draft: true`) are excluded at the collection query level, not the file level
 - Blog post filenames conventionally include the date: `YYYY-MM-DD-slug.md`
-- Comments integration (Giscus) is scaffolded but not yet wired — `Comments.astro` is a placeholder
+- Comments are powered by Giscus (`src/components/Comments.astro`), backed by Discussions in this repo's `Announcements` category, mapped by `pathname`. The widget is lazy-loaded via `IntersectionObserver`. Theme is a custom CSS URL (`/giscus-dark.css` or `/giscus-light.css`); a `MutationObserver` on `<html>[data-theme]` re-skins the iframe live on theme toggle.

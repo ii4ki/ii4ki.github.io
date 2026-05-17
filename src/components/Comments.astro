@@ -21,8 +21,8 @@ const SITE = 'https://ii4ki.github.io';
       document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 
     const load = () => {
-      if (host.dataset.loaded === 'true') return;
-      host.dataset.loaded = 'true';
+      if (host.dataset.loaded !== 'false') return;
+      host.dataset.loaded = 'pending';
       const s = document.createElement('script');
       s.src = 'https://giscus.app/client.js';
       s.async = true;
@@ -40,6 +40,18 @@ const SITE = 'https://ii4ki.github.io';
       s.setAttribute('data-lang', 'en');
       s.setAttribute('data-loading', 'lazy');
       host.appendChild(s);
+
+      const ready = new MutationObserver(() => {
+        const iframe = host.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        ready.disconnect();
+        iframe.addEventListener(
+          'load',
+          () => { host.dataset.loaded = 'ready'; },
+          { once: true }
+        );
+      });
+      ready.observe(host, { childList: true, subtree: true });
     };
 
     if ('IntersectionObserver' in window) {
@@ -85,7 +97,8 @@ const SITE = 'https://ii4ki.github.io';
   }
   .comments-heading .hash { color: var(--muted); font-weight: 400; }
   .giscus-host { min-height: 160px; }
-  .giscus-host[data-loaded="false"]::before {
+  .giscus-host[data-loaded="false"]::before,
+  .giscus-host[data-loaded="pending"]::before {
     content: "// loading comments…";
     color: var(--dim);
     font-size: var(--fs-sm);

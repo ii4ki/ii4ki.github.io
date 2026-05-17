@@ -4,7 +4,7 @@ Stages 1–5 from [staged-plan.md](./staged-plan.md) are complete. The site is l
 
 It replaces stages 6 and 7 of the original plan. Anything not covered here defers indefinitely.
 
-**Current priorities (decided 2026-05-17):** Stage 8.3 (Giscus), 8.2 (Satori OG), and 8.4 (code copy buttons) come first. Stage 6 (dev.to crosspost) follows. Stage 7 (Resend newsletter) is **deferred until there's a real reader signal** — no point provisioning a list with no subscribers waiting for one. Stage 8.6 (analytics) is already done via Umami.
+**Current priorities (decided 2026-05-17):** Stage 8.3 (Giscus) ✅ done, 8.2 (Satori OG) and 8.4 (code copy buttons) come next. Stage 6 (dev.to crosspost) follows. Stage 7 (Resend newsletter) is **deferred until there's a real reader signal** — no point provisioning a list with no subscribers waiting for one. Stage 8.6 (analytics) is already done via Umami.
 
 ---
 
@@ -292,15 +292,14 @@ Sources: [Pagefind docs](https://pagefind.app/), [Starlight uses Pagefind by def
 
 Sources: [astro-satori](https://github.com/kevinzunigacuellar/astro-satori), [dietcode.io build-time OG guide](https://dietcode.io/p/astro-og/), [Jilles Soeters — build vs runtime tradeoffs](https://jilles.me/og-images-astro-build-vs-runtime/).
 
-### 8.3 Giscus comments (~1 hour)
+### 8.3 Giscus comments — ✅ DONE (2026-05-17)
 
-Already scaffolded in `Comments.astro`. Just needs wiring.
+Shipped in commit `189285e`. Wiring:
 
-**Steps:**
-1. Run the giscus.app configurator against `ii4ki/ii4ki.github.io`. Use Discussions category `Announcements` (or create `Post comments`).
-2. Paste the resulting `data-*` attributes into `Comments.astro`.
-3. Lazy-load via `IntersectionObserver` — don't load the script until the comments section enters the viewport. Important for Lighthouse perf.
-4. Style overrides: a custom Giscus theme CSS file hosted on Pages (point `data-theme` at `https://ii4ki.github.io/giscus.css`). Mirror the dark/light tokens.
+- `src/components/Comments.astro` mounts the giscus client lazily via `IntersectionObserver` (200px rootMargin) and bridges the site theme toggle to the iframe via a `MutationObserver` on `<html>[data-theme]` + `setConfig` postMessage.
+- Mapping: `pathname`, `data-strict="1"`. Category: `Announcements` (existing, type Announcement — only maintainers/giscus can open new threads).
+- Custom theme files at `public/giscus-dark.css` and `public/giscus-light.css` map Primer/giscus CSS variables onto ii4ki tokens; JetBrains Mono inside the iframe; all `border-radius: 0` to match the site's squared corners.
+- giscus GitHub App installed on the `ii4ki` org, scoped to this repo only.
 
 **Pros:** free, no DB, comments are GitHub Discussions threads you already have notifications for.
 **Cons:** requires a GitHub account to comment. Acceptable for a dev-audience blog.
@@ -427,7 +426,7 @@ A 2px bar at the top of `<Post>` that fills as you scroll. ~30 min. Tasteful whe
 Polish-then-amplify: every cross-posted article lands on a page that looks finished. The Stage 8 priorities are also the cheapest, highest-confidence wins.
 
 ```text
-session 1   Stage 8.3 (Giscus)          — Comments.astro is already scaffolded; ~1 hour wire-up
+session 1   Stage 8.3 (Giscus)          — ✅ done 2026-05-17 (commit 189285e)
 session 2   Stage 8.4 (copy buttons)    — small rehype plugin; ~1 hour
 session 3   Stage 8.2 (Satori OG)       — port CD's OG template to JSX; ~3 hours
 session 4   Stage 6   (dev.to crosspost) — sidecar state + workflow; ~3–4 hours

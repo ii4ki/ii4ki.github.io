@@ -11,6 +11,7 @@ Personal site and blog built with [Astro 6](https://astro.build), deployed to Gi
 - **@astrojs/sitemap** — auto-generated sitemap
 - **@astrojs/rss** — RSS feed at `/rss.xml`
 - **reading-time** — estimated read time injected via remark plugin
+- **Giscus** — comments backed by GitHub Discussions, lazy-loaded, custom-themed to match the site
 
 ## Project Structure
 

@@ -1,11 +1,11 @@
 ---
 title: Hooks to the Rescue
 description: "Claude Code hooks explained — from the stdin/stdout contract to practical scripts that keep orphaned AI processes from eating your RAM."
-pubDate: 2026-05-17
+pubDate: 2026-05-20
 tags: [ai, efficiency, beginner]
 draft: false
 ---
-`@rkesteva` [posted a screenshot](https://www.threads.com/@rkesteva/post/DYXafupG09v) on Threads that stopped me mid-scroll: his MacBook's Force Quit window, Warp terminal consuming 38+ GB of RAM, Google Chrome eating another 48 — on a machine with 16 GB. Every app paused or not responding. In the comments he [clarified](https://www.threads.com/@rkesteva/post/DYXgX14FJFq): "Ironically Claude wasn't even using Playwright when this happened. Something in the Playwright + Warp agent loop went very wrong." He was only personally responsible for about 10 GB; the rest was Playwright, left running by Warp's agent long after the session it was needed for.
+`@rkesteva` [posted a screenshot](https://www.threads.com/@rkesteva/post/DYXafupG09v) on Threads that stopped me mid-scroll: his MacBook's Force Quit window, Warp terminal consuming 38+ GB of RAM, Google Chrome eating another 48 — on a machine with 16 GB. Every app paused or not responding. In the comments he [clarified](https://www.threads.com/@rkesteva/post/DYXgX14FJFq): "Ironically Claude wasn't even using Playwright when this happened. Something in the Playwright + Warp agent loop went very wrong." He was only personally responsible for about 10 GB; the rest was Playwright, left running long after the session it was needed for.
 
 I've been there. A self-hosted Whisper model once ate 70+ GB on my machine and froze it completely.
 
@@ -15,7 +15,7 @@ Claude Code happens to have the most mature session hook system among CLI AI too
 
 ## What Hooks Actually Are
 
-A hook is a shell command — or an HTTP call, or an LLM prompt — that Claude Code executes at specific lifecycle points: session start, session end, before a tool call, after a turn completes. Triggers wired into Claude's operating loop.
+A hook (in the context of AI tools) is a shell command — or an HTTP call, or an LLM prompt — that Claude Code executes at specific lifecycle points: session start, session end, before a tool call, after a turn completes. Triggers wired into Claude's operating loop.
 
 The distinction that matters: **hooks are deterministic, not advisory.** A rule in CLAUDE.md says "please don't." A `PreToolUse` hook with exit code 2 says "you physically cannot." Claude receives your error message and stops. That's a different class of control.
 

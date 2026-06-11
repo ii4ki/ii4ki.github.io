@@ -448,6 +448,32 @@ hr {
   margin: 2em 0;
 }
 
+/* Tables */
+.prose table {
+  display: block;          /* enables horizontal scroll on narrow screens */
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+.prose thead th {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+  text-align: left;
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  vertical-align: top;
+}
+.prose tbody tr:nth-child(even) td {
+  background: var(--surface);   /* subtle zebra; reads in both themes */
+}
+.prose td strong { color: var(--accent); }  /* matches the (a)/(b)/(c) emphasis */
+
 /* Inline code */
 .prose code, code.inline {
   background: var(--surface);

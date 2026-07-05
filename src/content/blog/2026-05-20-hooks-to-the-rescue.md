@@ -5,6 +5,7 @@ pubDate: 2026-05-20
 tags: [ai, efficiency, beginner]
 draft: false
 ---
+
 `@rkesteva` [posted a screenshot](https://www.threads.com/@rkesteva/post/DYXafupG09v) on Threads that stopped me mid-scroll: his MacBook's Force Quit window, Warp terminal consuming 38+ GB of RAM, Google Chrome eating another 48 — on a machine with 16 GB. Every app paused or not responding. In the comments he [clarified](https://www.threads.com/@rkesteva/post/DYXgX14FJFq): "Ironically Claude wasn't even using Playwright when this happened. Something in the Playwright + Warp agent loop went very wrong." He was only personally responsible for about 10 GB; the rest was Playwright, left running long after the session it was needed for.
 
 I've been there. A self-hosted Whisper model once ate 70+ GB on my machine and froze it completely.
@@ -46,19 +47,19 @@ Session-level hooks (`SessionStart`, `SessionEnd`) don't need to parse any of th
 
 Events fall into three cadences: once per session, once per turn, and on every tool call.
 
-| Event | When it fires |
-|-------|--------------|
-| `SessionStart` | Session begins or resumes |
-| `SessionEnd` | Session terminates |
-| `UserPromptSubmit` | Before Claude processes your prompt |
-| `PreToolUse` | Before a tool call — can block it |
-| `PostToolUse` | After a tool call succeeds |
-| `Stop` | When Claude finishes a turn |
-| `StopFailure` | When a turn ends due to API error |
-| `PreCompact` / `PostCompact` | Around context compaction |
-| `SubagentStart` / `SubagentStop` | When subagents spawn or finish |
+| Event                            | When it fires                       |
+| -------------------------------- | ----------------------------------- |
+| `SessionStart`                   | Session begins or resumes           |
+| `SessionEnd`                     | Session terminates                  |
+| `UserPromptSubmit`               | Before Claude processes your prompt |
+| `PreToolUse`                     | Before a tool call — can block it   |
+| `PostToolUse`                    | After a tool call succeeds          |
+| `Stop`                           | When Claude finishes a turn         |
+| `StopFailure`                    | When a turn ends due to API error   |
+| `PreCompact` / `PostCompact`     | Around context compaction           |
+| `SubagentStart` / `SubagentStop` | When subagents spawn or finish      |
 
-One more thing worth knowing upfront: hooks can be set at two levels. **Global hooks** in `~/.claude/settings.json` apply to every Claude Code session on your machine — resource management and MCP cleanup belong here. **Project-level hooks** in `.claude/settings.json` apply only within that project — useful for enforcing code style, protecting specific files, or project-specific safety rules. That's a topic for a future post.
+One more thing worth knowing upfront: hooks can be set at two levels. **Global hooks** in `~/.claude/settings.json` apply to every Claude Code session on your machine — resource management and MCP cleanup belong here. **Project-level hooks** in `.claude/settings.json` apply only within that project — useful for enforcing code style, protecting specific files, or project-specific safety rules. I've got [one of those](https://ii4ki.github.io/blog/2026-07-05-your-markdown-has-a-stutter/) worth reading: a `PostToolUse` hook that fixes the hard-wrapped Markdown Claude Code keeps writing into your files.
 
 ## The MCP Orphan Problem
 
@@ -124,9 +125,33 @@ Active pages dropped by 47,000 between `SessionStart` and `Stop` — roughly 735
 ```json
 {
   "hooks": {
-    "SessionStart": [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/mem-log.sh SessionStart" }] }],
-    "Stop": [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/mem-log.sh Stop" }] }],
-    "PreCompact": [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/mem-log.sh PreCompact" }] }]
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/mem-log.sh SessionStart"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "~/.claude/hooks/mem-log.sh Stop" }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/mem-log.sh PreCompact"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -138,12 +163,16 @@ The most directly useful hook for the orphan problem. Kills local MCP processes 
 ```json
 {
   "hooks": {
-    "SessionEnd": [{
-      "hooks": [{
-        "type": "command",
-        "command": "pkill -f 'npx.*mcp' || true"
-      }]
-    }]
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pkill -f 'npx.*mcp' || true"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
@@ -152,7 +181,7 @@ It's a blunt instrument — catches anything with "mcp" in the process command. 
 
 One thing worth knowing about how `pkill` works here: it's a system-wide kill, not a session-scoped one. It matches against every running process on the machine regardless of which session spawned it. So if Session A crashes and leaves an orphaned MCP process behind, Session B — even one that never touched an MCP at all — will sweep it up when it exits cleanly. The hook is a recurring janitor, not just a session cleanup.
 
-The actual limitation is narrower than it first appears: the hook only runs when *some* session exits gracefully. In practice that almost always happens eventually, so orphans are "eventually cleaned" rather than permanent. The exception is Docker-based MCPs — `pkill -f 'npx.*mcp'` kills the `docker run` wrapper, but the container itself keeps running under the Docker daemon. Those need explicit `docker stop`, which requires knowing the container ID — a separate piece worth its own script.
+The actual limitation is narrower than it first appears: the hook only runs when _some_ session exits gracefully. In practice that almost always happens eventually, so orphans are "eventually cleaned" rather than permanent. The exception is Docker-based MCPs — `pkill -f 'npx.*mcp'` kills the `docker run` wrapper, but the container itself keeps running under the Docker daemon. Those need explicit `docker stop`, which requires knowing the container ID — a separate piece worth its own script.
 
 For full crash resilience on either type, you'd need a `launchd` watchdog: a plist that runs every 60 seconds, checks if Claude is running, and kills stale processes if not. That approach works regardless of how the session ended. We'll cover it in a future post.
 
@@ -261,4 +290,3 @@ If this "boring-but-essential setup" vibe resonates, I covered [environment vari
 Further reading: [Anthropic's hooks reference](https://code.claude.com/docs/en/hooks) and [Kyle Redelinghuys' complete guide](https://www.ksred.com/claude-code-hooks-a-complete-guide-to-automating-your-ai-coding-workflow/).
 
 _Running Playwright MCP, Chrome DevTools, or other heavyweight local servers? Which ones have caused you memory problems — and are you on Claude Code, Cursor, or something else? Drop it below._
-
